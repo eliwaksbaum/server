@@ -25,7 +25,7 @@ pub fn contact(form: Form<Email<'_>>) -> Result<()>
         .subject("Contact Form from eli.waksbaum.com") 
         .body(form.message.to_string() + "\n\nSent from: " + form.sender_address)?; 
 
-    let password = fs::read_to_string("/home/eli/password.secret")?.replace(char::is_whitespace, "");
+    let password = fs::read_to_string("secrets/email-password")?.replace(char::is_whitespace, "");
     let creds = Credentials::new("eli@waksbaum.com".to_string(), password); 
 
     // Open a remote connection
