@@ -1,12 +1,15 @@
 #[macro_use] extern crate rocket;
+use std::path::PathBuf;
+
 use rocket::fs::{FileServer, NamedFile};
 use rocket::response::{Redirect, content::RawHtml};
-use rocket::http::Status;
+use rocket::http::{Status, CookieJar};
 use rocket::form::Form;
 
 pub mod blog;
 pub mod projects;
 pub mod mail;
+pub mod theme;
 
 #[catch(404)]
 async fn not_found() -> Option<NamedFile>
@@ -52,11 +55,23 @@ async fn send_mail(email: Form<mail::Email<'_>>) -> Option<NamedFile>
     NamedFile::open(path).await.ok()
 }
 
+#[get("/res/themed/cur/<path..>")]
+async fn get_theme(path: PathBuf, jar: &CookieJar<'_>) -> Option<NamedFile>
+{
+    theme::get_theme(path, jar).await
+}
+
+#[get("/res/themed/toggle/<path..>")]
+async fn toggle_theme(path: PathBuf, jar: &CookieJar<'_>) -> Option<NamedFile>
+{
+    theme::toggle_theme(path, jar).await
+}
+
 #[launch]
 fn rocket() -> _
 {
     rocket::build()
         .mount("/", FileServer::from("public/"))
-        .mount("/", routes![projects_home, blog_home, blog_tag, send_mail])
+        .mount("/", routes![projects_home, blog_home, blog_tag, send_mail, get_theme, toggle_theme])
         .register("/", catchers![not_found, permission_denied])
 }
