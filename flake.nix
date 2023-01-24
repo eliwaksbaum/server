@@ -32,9 +32,7 @@
       };
       inherit (pkgs) lib;
 
-      rust = pkgs.rust-bin.stable.latest.default.override {
-        extensions = [ "rust-src" ];
-      };
+      rust = pkgs.rust-bin.stable.latest.default;
       craneLib = (crane.mkLib pkgs).overrideToolchain rust;
 
       rocket = craneLib.buildPackage {
@@ -50,7 +48,12 @@
       devShell = pkgs.mkShell {
         name = "rocket-shell";
         inputsFrom = [rocket];
-        buildInputs = with pkgs; [];
+        buildInputs = with pkgs; [
+          (pkgs.rust-bin.stable.latest.default.override {
+            extensions = [ "rust-src" ];
+          })
+        ];
+        RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
       };
 
       defaultPackage = rocket;
