@@ -38,12 +38,12 @@ fn generate(tag: Option<&str>) -> ChainResult<RawHtml<String>>
     Ok(RawHtml(home_html))
 }
 
-fn get_tagged_previews(all_previews: &Vec<Preview>, tag: Option<&str>) -> String
+fn get_tagged_previews(all_previews: &[Preview], tag: Option<&str>) -> String
 {
     all_previews.iter()
         .filter(|p| match tag {
             None => true,
-            Some(t) => p.tags.iter().map(|x| normalize(x)).find(|x| x.eq(t)).is_some()
+            Some(t) => p.tags.iter().map(|x| normalize(x)).any(|x| x.eq(t))
         })
         .fold(String::new(), |a, b| a + &b.html)
 }
@@ -71,5 +71,5 @@ fn get_tag_sidebar(previews: Vec<Preview>) -> String
 
 pub fn normalize(tag: &str) -> String
 {
-    tag.to_lowercase().replace(" ", "_")
+    tag.to_lowercase().replace(' ', "_")
 }

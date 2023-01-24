@@ -5,7 +5,7 @@ use rand::{seq::SliceRandom, thread_rng};
 
 pub fn shuffle_cards() -> Result<RawHtml<String>, Status>
 {
-    fs::read_to_string("assets/projects-home.html").and_then(|mut html|
+    fs::read_to_string("assets/projects-home.html").map(|mut html|
     {
         let count = html.matches("order:0").count();
     
@@ -13,7 +13,7 @@ pub fn shuffle_cards() -> Result<RawHtml<String>, Status>
         {
             html = html.replacen("order:0", &(String::from("order:") + &n.to_string()), 1);
         }
-        Ok(RawHtml(html))
+        RawHtml(html)
     })
     .map_err(|_| Status::NotFound)
 }
