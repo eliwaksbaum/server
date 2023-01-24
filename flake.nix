@@ -32,7 +32,9 @@
       };
       inherit (pkgs) lib;
 
-      rust = pkgs.rust-bin.stable.latest.default;
+      rust = pkgs.rust-bin.stable.latest.default.override {
+        extensions = [ "rust-src" ];
+      };
       craneLib = (crane.mkLib pkgs).overrideToolchain rust;
 
       rocket = craneLib.buildPackage {
