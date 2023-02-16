@@ -10,7 +10,7 @@ pub async fn get_theme(path: PathBuf, jar: &CookieJar<'_>) -> Option<NamedFile>
         Some("dark") => "dark",
         _ => { set_theme(jar, "light"); "light" }
     };
-    let file = path.file_name()?.to_str()?;
+    let file = path.to_str()?;
     NamedFile::open(format!("public/res/themed/{}/{}", theme, file)).await.ok()
 }
 
@@ -22,7 +22,7 @@ pub async fn toggle_theme(path: PathBuf, jar: &CookieJar<'_>) -> Option<NamedFil
         _ => "dark"
     };
     set_theme(jar, switch);
-    let file = path.file_name()?.to_str()?;
+    let file = path.to_str()?;
     NamedFile::open(format!("public/res/themed/{}/{}", switch, file)).await.ok()
 }
 
